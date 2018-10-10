@@ -1,6 +1,9 @@
 
 const SYNC_BYTE: u8 = 0x47;
+const PACKET_SIZE: usize = 188;
 const MAX_PAYLOAD_SIZE: usize = 184;
+
+pub struct BinaryPacket ([u8;PACKET_SIZE]);
 
 // #[derive(Debug)]
 pub struct Packet {
@@ -16,8 +19,14 @@ pub struct Packet {
     payload_buffer: [u8; MAX_PAYLOAD_SIZE],
 }
 
+impl Default for Packet {
+    fn default() -> Self {
+        Self::null()
+    }
+}
+
 impl Packet {
-    pub fn null_packet() -> Packet {
+    pub fn null() -> Self {
         Packet {
             transport_error_indicator: false,
             payload_units_start_indicator: false,
@@ -64,7 +73,7 @@ mod tests {
 
     #[test]
     fn null_packet_fields() {
-        let packet = Packet::null_packet();
+        let packet = Packet::null();
         assert_eq!(false, packet.is_transport_error());
         assert_eq!(false, packet.is_payload_units_start());
         assert_eq!(false, packet.is_transport_priority());
