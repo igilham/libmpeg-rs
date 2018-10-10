@@ -2,8 +2,6 @@ const SYNC_BYTE: u8 = 0x47;
 const PACKET_SIZE: usize = 188;
 const MAX_PAYLOAD_SIZE: usize = 184;
 
-pub struct BinaryPacket ([u8;PACKET_SIZE]);
-
 // #[derive(Debug)]
 pub struct Packet {
     transport_error_indicator: bool,
@@ -65,10 +63,17 @@ impl Default for Packet {
     }
 }
 
-impl From<[u8;188]> for Packet {
+impl From<[u8; PACKET_SIZE]> for Packet {
     fn from(data: [u8; 188]) -> Self {
         // TODO: implement correctly
         Packet::default()
+    }
+}
+
+impl Into<[u8; PACKET_SIZE]> for Packet {
+    fn into(self) -> [u8;188] {
+        // TODO: implement correctly
+        [0u8; PACKET_SIZE]
     }
 }
 
