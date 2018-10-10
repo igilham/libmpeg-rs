@@ -1,0 +1,6 @@
+[package]
+name = "libmpeg-rs"
+version = "0.1.0"
+authors = ["Ian Gilham <ian.gilham@gmail.com>"]
+
+[dependencies]
