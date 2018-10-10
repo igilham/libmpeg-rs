@@ -1,4 +1,3 @@
-
 const SYNC_BYTE: u8 = 0x47;
 const PACKET_SIZE: usize = 188;
 const MAX_PAYLOAD_SIZE: usize = 184;
@@ -17,12 +16,6 @@ pub struct Packet {
     // adaptation_field: AdaptationField,
     // payload: [u8],
     payload_buffer: [u8; MAX_PAYLOAD_SIZE],
-}
-
-impl Default for Packet {
-    fn default() -> Self {
-        Self::null()
-    }
 }
 
 impl Packet {
@@ -63,6 +56,19 @@ impl Packet {
 
     pub fn continuity_counter(&self) -> u32 {
         self.continuity_counter
+    }
+}
+
+impl Default for Packet {
+    fn default() -> Self {
+        Self::null()
+    }
+}
+
+impl From<[u8;188]> for Packet {
+    fn from(data: [u8; 188]) -> Self {
+        // TODO: implement correctly
+        Packet::default()
     }
 }
 
