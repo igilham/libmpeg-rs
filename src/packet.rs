@@ -1,8 +1,12 @@
+// packet
+use std::fmt;
+
 const SYNC_BYTE: u8 = 0x47;
 const PACKET_SIZE: usize = 188;
 const MAX_PAYLOAD_SIZE: usize = 184;
 
-// #[derive(Debug)]
+pub const PID_MAX: u16 = 8191;
+
 pub struct Packet {
     transport_error_indicator: bool,
     payload_units_start_indicator: bool,
@@ -57,6 +61,12 @@ impl Packet {
     }
 }
 
+impl fmt::Debug for Packet {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "( pid: {} )", self.pid())
+    }
+}
+
 impl Default for Packet {
     fn default() -> Self {
         Self::null()
@@ -77,20 +87,11 @@ impl Into<[u8; PACKET_SIZE]> for Packet {
     }
 }
 
-#[cfg(test)]
-mod tests {
-
-    use super::Packet;
-
-    #[test]
-    fn null_packet_fields() {
-        let packet = Packet::null();
-        assert_eq!(false, packet.is_transport_error());
-        assert_eq!(false, packet.is_payload_units_start());
-        assert_eq!(false, packet.is_transport_priority());
-        assert_eq!(0u32, packet.pid());
-        assert_eq!(0u32, packet.transport_scrambling_control());
-        assert_eq!(0u32, packet.continuity_counter());
-        // TODO: check payload is zeroed
+impl PartialEq for Packet {
+    // Compare packets by pid only
+    fn eq(&self, other: &Self) -> bool {
+        self.pid() == other.pid()
     }
 }
+
+impl Eq for Packet {}
