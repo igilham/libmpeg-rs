@@ -1,4 +1,4 @@
-// packet
+// MPEG Transport Stream Packet
 use std::fmt;
 use std::ops;
 
@@ -12,6 +12,8 @@ pub const PID_MAX: u16 = 8191;
 pub type Header = [u8; HEADER_SIZE];
 
 pub type Payload = [u8; PAYLOAD_SIZE];
+
+pub type PacketBuffer = [u8; PACKET_SIZE];
 
 // Allocate a payload. Default::default does not work here
 fn allocate_payload() -> Payload {
@@ -194,8 +196,8 @@ impl PartialEq for Packet {
 impl Eq for Packet {}
 
 // convert from fixed-size array of u8 ([u8; PACKET_LEN])
-impl From<[u8; PACKET_SIZE]> for Packet {
-    fn from(data: [u8; PACKET_SIZE]) -> Self {
+impl From<PacketBuffer> for Packet {
+    fn from(data: PacketBuffer) -> Self {
         let mut header: Header = Default::default();
         let mut payload: Payload = allocate_payload();
 
@@ -207,9 +209,20 @@ impl From<[u8; PACKET_SIZE]> for Packet {
 }
 
 // Convert from a tuple of fixed-size arrays
-impl From<([u8; HEADER_SIZE], [u8; PAYLOAD_SIZE])> for Packet {
-    fn from(data: ([u8; HEADER_SIZE], [u8; PAYLOAD_SIZE])) -> Self {
+impl From<(Header, Payload)> for Packet {
+    fn from(data: (Header, Payload)) -> Self {
         return Self { header: data.0, payload: data.1 };
+    }
+}
+
+// Convert to an array
+impl Into<PacketBuffer> for Packet {
+    fn into(self) -> PacketBuffer {
+        let mut buf: PacketBuffer = [0u8; PACKET_SIZE];
+        for i in 0 .. PACKET_SIZE {
+            buf[i] = self[i]
+        }
+        buf
     }
 }
 
