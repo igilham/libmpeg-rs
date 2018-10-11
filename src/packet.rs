@@ -14,9 +14,13 @@ pub struct Packet {
     pid: u16,
     transport_scrambling_control: u8,
     continuity_counter: u8,
-    // adaptation_field: Option<AdaptationField>,
+    adaptation_field: Option<AdaptationField>,
     payload: Option<Vec<u8>>,
 }
+
+// TODO: fill out adaptation field
+#[derive(Eq, PartialEq, Clone)]
+pub struct AdaptationField{}
 
 impl Packet {
     pub fn null() -> Self {
@@ -27,7 +31,7 @@ impl Packet {
             pid: MAX_PID,
             transport_scrambling_control: 0,
             continuity_counter: 0,
-            // adaptation_field: AdaptationField,
+            adaptation_field: None,
             payload: Some(vec!(0xffu8; PAYLOAD_SIZE)),
         }
     }
