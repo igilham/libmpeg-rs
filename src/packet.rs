@@ -6,7 +6,7 @@ pub const PAYLOAD_SIZE: usize = 184;
 pub const SYNC_BYTE: u8 = 0x47;
 pub const MAX_PID: u16 = 0x1FFF;
 
-#[derive(Clone)]
+#[derive(Eq, PartialEq, Clone)]
 pub struct Packet {
     transport_error: bool,
     payload_unit_start: bool,
@@ -15,7 +15,7 @@ pub struct Packet {
     transport_scrambling_control: u8,
     continuity_counter: u8,
     // adaptation_field: Option<AdaptationField>,
-    payload: [u8; PAYLOAD_SIZE],
+    payload: Option<Vec<u8>>,
 }
 
 impl Packet {
@@ -28,7 +28,7 @@ impl Packet {
             transport_scrambling_control: 0,
             continuity_counter: 0,
             // adaptation_field: AdaptationField,
-            payload: [0xffu8; PAYLOAD_SIZE],
+            payload: Some(vec!(0xffu8; PAYLOAD_SIZE)),
         }
     }
 
@@ -48,6 +48,7 @@ impl Packet {
         let adaptation_field_flag = s.pull_bit()?;
         let payload_flag = s.pull_bit()?;
         packet.continuity_counter = s.pull_bits(4)?;
+        packet.payload = None;
 
         // TODO: build adaptation field
         if adaptation_field_flag {}
@@ -92,25 +93,16 @@ impl Default for Packet {
     }
 }
 
-impl From<[u8; PACKET_SIZE]> for Packet {
-    fn from(data: [u8; 188]) -> Self {
-        // TODO: implement correctly
-        Packet::parse(&data[..]).unwrap()
-    }
-}
+// impl From<[u8; PACKET_SIZE]> for Packet {
+//     fn from(data: [u8; 188]) -> Self {
+//         // TODO: implement correctly
+//         Packet::parse(&data[..]).unwrap()
+//     }
+// }
 
-impl Into<[u8; PACKET_SIZE]> for Packet {
-    fn into(self) -> [u8;188] {
-        // TODO: implement correctly
-        [0u8; PACKET_SIZE]
-    }
-}
-
-impl PartialEq for Packet {
-    // Compare packets by pid only
-    fn eq(&self, other: &Self) -> bool {
-        self.pid() == other.pid()
-    }
-}
-
-impl Eq for Packet {}
+// impl Into<[u8; PACKET_SIZE]> for Packet {
+//     fn into(self) -> [u8;188] {
+//         // TODO: implement correctly
+//         [0u8; PACKET_SIZE]
+//     }
+// }
