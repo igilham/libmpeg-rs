@@ -97,16 +97,9 @@ impl Default for Packet {
     }
 }
 
-// impl From<[u8; PACKET_SIZE]> for Packet {
-//     fn from(data: [u8; 188]) -> Self {
-//         // TODO: implement correctly
-//         Packet::parse(&data[..]).unwrap()
-//     }
-// }
-
-// impl Into<[u8; PACKET_SIZE]> for Packet {
-//     fn into(self) -> [u8;188] {
-//         // TODO: implement correctly
-//         [0u8; PACKET_SIZE]
-//     }
-// }
+impl<'a> From<&'a[u8]> for Packet {
+    // Panics if parsing fails
+    fn from(data: &[u8]) -> Self {
+        Packet::parse(data).unwrap()
+    }
+}
